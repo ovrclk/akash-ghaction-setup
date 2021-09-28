@@ -23,7 +23,7 @@ Sets up the Akash CLI for Github Action use. Installs the latest Akash CLI, Impo
 ## Example usage
 
 ```yaml
-- name: Akash On Github Setup
+- name: Akash on Github Actions Setup
   uses: ovrclk/akash-ghaction-setup
   with:
     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -1,5 +1,5 @@
 # action.yml
-name: "Setup Akash Github Action"
+name: "Akash on Github Actions Setup"
 description: "Akash CLI Tools in GitHub. Publish a Project."
 inputs:
   AKASH_WALLET_KEY: # id of input
