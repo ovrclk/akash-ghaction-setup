@@ -1,0 +1,36 @@
+# action.yml
+name: "Setup Akash Github Action"
+description: "Akash CLI Tools in GitHub. Publish a Project."
+inputs:
+  AKASH_WALLET_KEY: # id of input
+    description: "akash wallet key pem"
+    required: true
+  AKASH_WALLET_KEY_PASSWORD: # id of input
+    description: "password encrypting the pem"
+    required: true
+  GITHUB_TOKEN: # id of input
+    description: "github token runner"
+    required: true
+  AKASH_DEPLOY_CERTIFICATE:
+    description: "akash deploy certificate"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Akash CLI
+      shell: bash
+      run: |-
+        wget $(curl -H "Authorization: token ${{inputs.GITHUB_TOKEN}}" -s https://api.github.com/repos/ovrclk/akash/releases/latest | jq -r ".assets[] | select(.name | test(\"linux_amd64.deb\")) | .browser_download_url") -O akash.deb
+        sudo dpkg -i akash.deb
+    - name: import key
+      shell: bash
+      env:
+        AKASH_HOME: /home/runner/.akash
+      run: |-
+        echo "${{inputs.AKASH_WALLET_KEY}}" > key.key
+        echo "${{inputs.AKASH_WALLET_KEY_PASSWORD}}" | akash keys import AKASH_GITHUB_RUNNER key.key --keyring-backend test
+    - name: import certificate
+      env:
+        AKASH_HOME: /home/runner/.akash
+      shell: bash
+      run: echo "${{inputs.AKASH_DEPLOY_CERTIFICATE}}" > ${{env.AKASH_HOME}}/$(akash keys show AKASH_GITHUB_RUNNER --keyring-backend test --output=json | jq -r ".address").pem
