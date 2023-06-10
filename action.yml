@@ -20,7 +20,7 @@ runs:
     - name: Install Akash CLI
       shell: bash
       run: |-
-        wget $(curl -H "Authorization: token ${{inputs.GITHUB_TOKEN}}" -s https://api.github.com/repos/ovrclk/akash/releases/latest | jq -r ".assets[] | select(.name | test(\"linux_amd64.deb\")) | .browser_download_url") -O akash.deb
+        wget $(curl -H "Authorization: token ${{inputs.GITHUB_TOKEN}}" -s https://api.github.com/repos/akash-network/provider/releases/latest | jq -r ".assets[] | select(.name | test(\"linux_amd64.deb\")) | .browser_download_url") -O akash.deb
         sudo dpkg -i akash.deb
     - name: import key
       shell: bash
@@ -28,9 +28,10 @@ runs:
         AKASH_HOME: /home/runner/.akash
       run: |-
         echo "${{inputs.AKASH_WALLET_KEY}}" > key.key
-        echo "${{inputs.AKASH_WALLET_KEY_PASSWORD}}" | akash keys import AKASH_GITHUB_RUNNER key.key --keyring-backend test
+        echo "${{inputs.AKASH_WALLET_KEY_PASSWORD}}" | provider-services keys import AKASH_GITHUB_RUNNER key.key --keyring-backend test
+        provider-services keys show AKASH_GITHUB_RUNNER --keyring-backend test
     - name: import certificate
       env:
         AKASH_HOME: /home/runner/.akash
       shell: bash
-      run: echo "${{inputs.AKASH_DEPLOY_CERTIFICATE}}" > ${{env.AKASH_HOME}}/$(akash keys show AKASH_GITHUB_RUNNER --keyring-backend test --output=json | jq -r ".address").pem
+      run: echo "${{inputs.AKASH_DEPLOY_CERTIFICATE}}" > ${{env.AKASH_HOME}}/$(provider-services keys show AKASH_GITHUB_RUNNER --keyring-backend test --output=json | jq -r ".address").pem
