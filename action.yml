@@ -29,6 +29,7 @@ runs:
       run: |-
         echo "${{inputs.AKASH_WALLET_KEY}}" > key.key
         echo "${{inputs.AKASH_WALLET_KEY_PASSWORD}}" | provider-services keys import AKASH_GITHUB_RUNNER key.key --keyring-backend test
+        provider-services keys show AKASH_GITHUB_RUNNER --keyring-backend test
     - name: import certificate
       env:
         AKASH_HOME: /home/runner/.akash
